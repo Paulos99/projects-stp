@@ -2490,22 +2490,6 @@
             }
         }
 
-        /* Блокируем прокрутку фона при открытой модалке */
-        body.no-scroll {
-            overflow: hidden !important;
-            height: 100vh;
-        }
-        /* Убедимся, что сама модалка прокручиваемая */
-        .modal {
-            position: fixed;
-            inset: 0;
-            overflow-y: auto;
-        }
-        .modal-body {
-            overflow-y: auto;
-            max-height: calc(100vh - 180px);
-        }
-
         /* Правки: делаем контент уроков шире на мобильных */
         @media (max-width: 768px) {
             /* Растягиваем модалку и контент уроков на всю ширину экрана */
@@ -6055,12 +6039,10 @@
                 }
                 
                 document.getElementById('lessonModal').style.display = 'block';
-                document.body.classList.add('no-scroll');
             }
             
             closeLessonModal() {
                 document.getElementById('lessonModal').style.display = 'none';
-                document.body.classList.remove('no-scroll');
             }
 
             openPracticeModal(practiceKey, title) {
@@ -6075,7 +6057,6 @@
                 document.getElementById('practiceContent').innerHTML = contentHtml;
                 if (isEn) this.localizeModalContentIfEnglish('practice');
                 modal.style.display = 'block';
-                document.body.classList.add('no-scroll');
                 // Центрируем и исключаем скролл к верху страницы
                 modal.scrollIntoView({ behavior: 'auto', block: 'center' });
             }
@@ -6083,7 +6064,6 @@
             closePracticeModal() {
                 const modal = document.getElementById('practiceModal');
                 if (modal) modal.style.display = 'none';
-                document.body.classList.remove('no-scroll');
             }
             
             previousLesson() {
