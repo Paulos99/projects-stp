@@ -2116,30 +2116,6 @@
                 width: 100%;
                 text-align: center;
             }
-
-            /* Дополнительные правки для очень маленьких экранов */
-            .modal-content {
-                width: 100vw !important;
-                height: 100vh !important;
-                left: 0 !important;
-                right: 0 !important;
-                top: 0 !important;
-                transform: none !important;
-                border-radius: 0 !important;
-            }
-
-            .modal-header {
-                padding: 1rem 1rem 0.75rem;
-            }
-
-            .modal-body {
-                padding: 1rem;
-                max-height: calc(100vh - 180px);
-            }
-
-            .modal-footer {
-                padding: 0.75rem 1rem 1rem;
-            }
         }
 
         /* Улучшенные touch-события для мобильных */
@@ -2514,22 +2490,6 @@
             }
         }
 
-        /* Блокируем прокрутку фона при открытой модалке */
-        body.no-scroll {
-            overflow: hidden !important;
-            height: 100vh;
-        }
-        /* Убедимся, что сама модалка прокручиваемая */
-        .modal {
-            position: fixed;
-            inset: 0;
-            overflow-y: auto;
-        }
-        .modal-body {
-            overflow-y: auto;
-            max-height: calc(100vh - 180px);
-        }
-
         /* Правки: делаем контент уроков шире на мобильных */
         @media (max-width: 768px) {
             /* Растягиваем модалку и контент уроков на всю ширину экрана */
@@ -2540,10 +2500,6 @@
                 left: 0;
                 right: 0;
                 border-radius: 0;
-                height: 100vh !important;
-                max-height: 100vh !important;
-                top: 0 !important;
-                transform: none !important;
             }
 
             /* Снимаем скрытые ограничения ширины и уменьшаем внутренние поля */
@@ -2558,23 +2514,6 @@
                 max-width: 100% !important;
             }
 
-            /* Исправляем отображение контента внутри модалки */
-            .modal-body > * {
-                max-width: 100% !important;
-                width: 100% !important;
-            }
-
-            .lesson-content,
-            .lesson-section,
-            .info-box,
-            .code-examples,
-            .task-item {
-                max-width: 100% !important;
-                width: 100% !important;
-                padding-left: 0.5rem !important;
-                padding-right: 0.5rem !important;
-            }
-
             /* Небольшое снижение боковых отступов у элементов внутри урока */
             .lesson-item,
             .practice-card,
@@ -2582,34 +2521,6 @@
             .stat-card {
                 padding-left: 1rem;
                 padding-right: 1rem;
-            }
-
-            /* Мобильные модалки: корректное позиционирование и размеры */
-            .modal {
-                padding: 0;
-            }
-
-            .modal-header {
-                padding: 1.5rem 1.5rem 1rem;
-                border-radius: 0;
-            }
-
-            .modal-body {
-                padding: 1.5rem;
-                max-height: calc(100vh - 200px);
-                overflow-y: auto;
-            }
-
-            .modal-footer {
-                padding: 1rem 1.5rem 1.5rem;
-                border-radius: 0;
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-
-            .modal-footer .btn {
-                width: 100%;
-                text-align: center;
             }
         }
     </style>
@@ -6128,12 +6039,10 @@
                 }
                 
                 document.getElementById('lessonModal').style.display = 'block';
-                document.body.classList.add('no-scroll');
             }
             
             closeLessonModal() {
                 document.getElementById('lessonModal').style.display = 'none';
-                document.body.classList.remove('no-scroll');
             }
 
             openPracticeModal(practiceKey, title) {
@@ -6148,7 +6057,6 @@
                 document.getElementById('practiceContent').innerHTML = contentHtml;
                 if (isEn) this.localizeModalContentIfEnglish('practice');
                 modal.style.display = 'block';
-                document.body.classList.add('no-scroll');
                 // Центрируем и исключаем скролл к верху страницы
                 modal.scrollIntoView({ behavior: 'auto', block: 'center' });
             }
@@ -6156,7 +6064,6 @@
             closePracticeModal() {
                 const modal = document.getElementById('practiceModal');
                 if (modal) modal.style.display = 'none';
-                document.body.classList.remove('no-scroll');
             }
             
             previousLesson() {
