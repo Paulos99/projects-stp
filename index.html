@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StP Prompt Studio — шаблоны промптов</title>
+  <style>
+    :root {
+      /* Светлая тема: больше серых подложек и мягкие акценты, чтобы не слепило */
+      --bg: #f3f4f6;
+      --panel: #fafafa;         /* основная панель слегка серая */
+      --panel-2: #f3f4f6;       /* верхние панели/подложки */
+      --panel-3: #f9fafb;       /* контролы форм */
+      --border: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
+      --accent: #e31c24;
+      --accent-2: #b91c1c;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --shadow: 0 2px 12px rgba(17,24,39,.06);
+      --ring: rgba(227,28,36,.12);
+      --hint: #6b7280;
+      --chip-bg: #eef2f7;
+      --chip-text: #374151;
+      --mark-bg: rgba(227,28,36,.12);
+      --mark-text: #7f1d1d;
+      --app-bg: linear-gradient(180deg, #f6f7f9, #f3f4f6);
+      --header-bg: linear-gradient(180deg, rgba(255,255,255,0.9), #ffffff);
+    }
+
+    /* ===== ТЁМНАЯ ТЕМА ===== */
+    [data-theme="dark"] {
+      /* Главный цвет тёмной темы */
+      --bg: #2d2e33;
+      --panel: #2d2e33;
+      --panel-2: #2a2b2f;
+      --panel-3: #26272b;
+      --border: #3a3c42;
+      --text: #e6e7eb;
+      --muted: #a1a1aa;
+      --accent: #e31c24;
+      --accent-2: #b91c1c;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --shadow: 0 6px 24px rgba(0,0,0,.45);
+      --ring: rgba(227,28,36,.25);
+      --app-bg: #2d2e33;
+      --header-bg: linear-gradient(180deg, rgba(45,46,51,.95), #2d2e33);
+      --hint: #a1a1aa;
+      --chip-bg: #3a3c42;
+      --chip-text: #e6e7eb;
+      --mark-bg: rgba(227,28,36,.28);
+      --mark-text: #ffffff;
+    }
+    * { box-sizing: border-box }
+    body {
+      margin: 0;
+      background: var(--app-bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      min-height: 100dvh;
+      display: grid;
+      grid-template-rows: 64px 1fr;
+    }
+    header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 20px; border-bottom: 1px solid var(--border);
+      background: var(--header-bg);
+      position: sticky; top: 0; z-index: 10;
+    }
+    header h1 {
+      font-size: 18px; margin: 0; letter-spacing: .3px; font-weight: 700;
+      color: var(--text);
+    }
+    .kbd {
+      font: 12px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: var(--panel-3); color: var(--text); border: 1px solid var(--border);
+      border-bottom-color: var(--border); padding: 2px 6px; border-radius: 6px;
+    }
+    .container {
+      display: grid; grid-template-columns: 450px 1fr; gap: 12px;
+      padding: 12px; height: calc(100dvh - 64px);
+    }
+    aside {
+      border: 1px solid var(--border); border-radius: 12px; background: var(--panel);
+      display: grid; grid-template-rows: auto auto 1fr auto; overflow: hidden; box-shadow: var(--shadow);
+    }
+    main {
+      border: 1px solid var(--border); border-radius: 12px; background: var(--panel);
+      display: grid; grid-template-rows: auto 1fr auto; overflow: hidden; box-shadow: var(--shadow);
+    }
+    .toolbar, .toolbar-right {
+      display: flex; gap: 8px; padding: 10px; border-bottom: 1px solid var(--border);
+      align-items: center; background: var(--panel-2);
+    }
+    .toolbar-right { justify-content: space-between }
+    .search {
+      display: flex; gap: 8px; padding: 6px; border-bottom: 1px solid var(--border);
+      background: var(--panel-2);
+    }
+    input[type="text"], textarea, select {
+      width: 100%; background: var(--panel-3); color: var(--text);
+      border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+      outline: none; transition: border .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    input[type="text"]:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--ring);
+      background: var(--panel);
+    }
+    input::placeholder, textarea::placeholder { color: var(--muted) }
+    textarea {
+      min-height: 180px; resize: vertical; font: 14px/1.45 ui-monospace, Menlo, Consolas, monospace;
+      white-space: pre-wrap;
+    }
+    label { font-size: 12px; color: var(--muted); margin-bottom: 6px; display: block }
+    .btn {
+      background: linear-gradient(180deg, #f8fafc, #f3f4f6);
+      border: 1px solid var(--border); color: #1f2937; padding: 8px 12px; border-radius: 8px;
+      cursor: pointer; font-weight: 600; font-size: 13px;
+    }
+    .btn:hover { filter: brightness(0.99) }
+    .btn:active { transform: translateY(1px) }
+    .btn.primary {
+      background: linear-gradient(180deg, #f05252, #e31c24);
+      border-color: #e31c24; color: #ffffff;
+    }
+    .btn.danger { border-color: #dc2626; background: linear-gradient(180deg, #ef4444, #dc2626); color: #fff }
+    .btn.ghost { background: transparent; border-color: var(--border) }
+    /* Тёмная тема для кнопок: читаемый текст и корректные подложки */
+    [data-theme="dark"] .btn {
+      background: linear-gradient(180deg, #3a3c42, #2f3035);
+      border-color: #4a4c54;
+      color: var(--text);
+    }
+    [data-theme="dark"] .btn.ghost { background: transparent; border-color: #4a4c54; color: var(--text) }
+    [data-theme="dark"] .btn.primary { background: linear-gradient(180deg, #e64949, #c81e1e); border-color: #c81e1e; color: #ffffff }
+    .list {
+      overflow: auto; padding: 8px;
+    }
+    .item {
+      border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 8px;
+      background: var(--panel-3);
+      cursor: pointer;
+    }
+    .item:hover { background: var(--panel); border-color: #d1d5db }
+    .item.active { background: var(--panel); border-color: var(--accent); box-shadow: 0 0 0 3px var(--ring) }
+    .item h4 { margin: 0 0 6px; font-size: 14px }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap }
+    .tag {
+      font-size: 11px; color: var(--chip-text); border: 1px solid var(--border);
+      padding: 2px 8px; border-radius: 999px; background: var(--chip-bg);
+    }
+    .editor { padding: 12px; overflow: auto; display: grid; gap: 12px }
+    .row { display: grid; gap: 6px }
+    .row.cols { grid-template-columns: 1fr 1fr; gap: 12px }
+    .preview {
+      border-top: 1px solid var(--border); background: var(--panel-2);
+      padding: 12px; display: grid; gap: 8px;
+    }
+    .preview-box {
+      border: 1px solid var(--border); border-radius: 8px; background: var(--panel);
+      padding: 12px; font: 14px/1.5 ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap;
+      /* Для подсветки mark */
+      word-break: break-word;
+    }
+    .preview-box mark {
+      background: var(--mark-bg);
+      color: var(--mark-text);
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+    .vars { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) }
+    .muted { color: var(--muted); font-size: 12px }
+    .footer {
+      border-top: 1px solid var(--border); padding: 8px 10px; display: flex; gap: 8px; justify-content: space-between;
+      background: var(--panel-2);
+    }
+    .spacer { flex: 1 }
+    .hint { color: var(--hint); font-size: 12px }
+    .inline { display: inline-flex; gap: 6px; align-items: center }
+    .divider { height: 1px; background: var(--border); margin: 4px 0 8px }
+    .danger-zone { display: flex; gap: 8px; flex-wrap: wrap }
+    @media (max-width: 980px) {
+      .container { grid-template-columns: 1fr; height: auto }
+      aside { min-height: 40dvh }
+      main { min-height: 60dvh }
+    }
+
+    /* Разделы (большие вкладки) */
+    .sections-bar {
+      display: flex; gap: 8px; padding: 10px; border-bottom: 1px solid var(--border);
+      background: var(--panel-2); align-items: center; flex-wrap: wrap;
+    }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab {
+      padding: 10px 14px; border: 1px solid var(--border); border-radius: 999px; cursor: pointer;
+      background: var(--panel-3); color: var(--text); font-weight: 600; letter-spacing: .2px;
+    }
+    .tab:hover { border-color: var(--accent) }
+    .tab.active { background: var(--panel); border-color: var(--accent); color: var(--text); box-shadow: 0 0 0 3px var(--ring) }
+    .sections-actions { margin-left: auto; display: flex; gap: 8px }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>StP Prompt Studio</h1>
+    <span class="muted">Шаблоны промптов для нейросетей</span>
+    <span class="spacer"></span>
+    <div class="inline">
+      <button id="themeBtn" class="btn ghost">Тема: Светлая</button>
+    </div>
+    <span class="hint inline">Горячие клавиши:
+      <span class="kbd">Ctrl</span>+<span class="kbd">S</span> сохранить
+      <span class="kbd">Ctrl</span>+<span class="kbd">N</span> новый
+      <span class="kbd">Ctrl</span>+<span class="kbd">B</span> копировать
+      <span class="kbd">Ctrl</span>+<span class="kbd">E</span> экспорт
+    </span>
+  </header>
+
+  <div class="container">
+    <aside>
+      <div class="toolbar">
+        <button id="newBtn" class="btn primary">Новый шаблон</button>
+        <button id="dupBtn" class="btn">Дублировать</button>
+        <button id="moveBtn" class="btn">Переместить</button>
+        <button id="delBtn" class="btn danger">Удалить</button>
+      </div>
+      <div class="sections-bar">
+        <div class="tabs" id="sectionsBar"></div>
+        <div class="sections-actions">
+          <button id="manageSectionsBtn" class="btn">Разделы</button>
+        </div>
+      </div>
+      <div class="search">
+        <input id="searchInput" type="text" placeholder="Поиск по названию/описанию/тегам…" />
+        <button id="clearSearchBtn" class="btn ghost">Очистить</button>
+      </div>
+      <div id="list" class="list"></div>
+      <div class="footer">
+        <div class="inline">
+          <input id="importFile" type="file" accept="application/json" style="display:none" />
+          <button id="importBtn" class="btn">Импорт</button>
+          <button id="exportBtn" class="btn">Экспорт</button>
+        </div>
+        <span class="muted" id="countInfo"></span>
+      </div>
+    </aside>
+
+    <main>
+      <div class="toolbar-right">
+        <div class="inline">
+          <button id="saveBtn" class="btn primary">Сохранить</button>
+          <button id="copyBtn" class="btn">Копировать итог</button>
+        </div>
+        <div class="inline">
+          <span class="muted">Последнее сохранение:</span>
+          <span id="savedAt" class="hint">—</span>
+        </div>
+        <div class="inline">
+          <button id="cloudPullBtn" class="btn ghost">Загрузить из облака</button>
+          <button id="cloudPushBtn" class="btn ghost">Выгрузить в облако</button>
+          <button id="settingsBtn" class="btn">Настройки</button>
+        </div>
+      </div>
+
+      <div class="editor">
+        <div class="row cols">
+          <div class="row">
+            <label for="title">Название</label>
+            <input id="title" type="text" placeholder="Напр.: Лаконичная суммаризация" />
+          </div>
+          <div class="row">
+            <label for="tags">Теги (через запятую)</label>
+            <input id="tags" type="text" placeholder="summarize, ru, short" />
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="sectionSelect">Раздел</label>
+          <select id="sectionSelect"></select>
+        </div>
+
+        <div class="row cols">
+          <div class="row">
+            <label for="desc">Описание</label>
+            <input id="desc" type="text" placeholder="Кратко опишите назначение шаблона" />
+          </div>
+          <div class="row">
+            <label for="author">Автор</label>
+            <input id="author" type="text" placeholder="Имя или ник автора" />
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="content">
+            Текст шаблона (используйте плейсхолдеры вида {{variable}}). 
+            <span class="inline">
+              <button id="wrapSelectionBtn" class="btn ghost">Выделенное → {{var}}</button>
+            </span>
+          </label>
+          <textarea id="content" placeholder="Пример:
+Выступай как эксперт по теме.
+Суммируй текст с фокусом на {{audience}}.
+Требуемый стиль: {{tone}}.
+Текст:
+{{input}}"></textarea>
+        </div>
+
+        <div>
+          <div class="inline">
+            <strong>Переменные</strong>
+            <span class="muted">обнаружены в тексте шаблона</span>
+          </div>
+          <div class="vars" id="vars"></div>
+        </div>
+        <div class="divider"></div>
+        <div class="danger-zone">
+          <button id="resetVarsBtn" class="btn ghost">Сбросить значения переменных</button>
+          <button id="clearTemplateBtn" class="btn ghost">Очистить форму</button>
+        </div>
+      </div>
+
+      <div class="preview">
+        <div class="inline">
+          <strong>Предпросмотр итогового промпта</strong>
+          <span class="muted">подстановки подсвечены</span>
+        </div>
+        <div class="preview-box" id="preview"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Модальное окно настроек облака -->
+  <div id="settingsModal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 100; align-items: center; justify-content: center;">
+    <div style="background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 12px; width: min(640px, 96vw); box-shadow: var(--shadow);">
+      <div style="display:flex; align-items:center; justify-content: space-between; padding:12px 14px; border-bottom:1px solid var(--border); background: var(--panel-2);">
+        <strong>Настройки облака (Supabase)</strong>
+        <button id="settingsClose" class="btn ghost">Закрыть</button>
+      </div>
+      <div style="padding: 12px; display: grid; gap: 10px;">
+        <div class="row">
+          <label for="supabaseUrl">URL проекта (https://...supabase.co)</label>
+          <input id="supabaseUrl" type="text" placeholder="https://xxxx.supabase.co" />
+        </div>
+        <div class="row">
+          <label for="supabaseKey">Anon Public Key</label>
+          <input id="supabaseKey" type="text" placeholder="ey..." />
+        </div>
+        <div class="row cols">
+          <div class="row">
+            <label for="supabaseTable">Таблица</label>
+            <input id="supabaseTable" type="text" placeholder="templates" value="templates" />
+          </div>
+          <div class="row">
+            <label for="cloudScope">Облако: что синхронизировать</label>
+            <select id="cloudScope">
+              <option value="templates">Только шаблоны</option>
+              <option value="all">Шаблоны + разделы + переменные</option>
+            </select>
+          </div>
+        </div>
+        <div class="inline" style="justify-content: flex-end; gap:8px;">
+          <button id="settingsSave" class="btn primary">Сохранить</button>
+        </div>
+        <div class="muted">Создайте таблицу с колонками: id (text, PK), title (text), description (text), tags (jsonb), content (text), sectionId (text), updatedAt (timestamptz), author (text).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно управления разделами -->
+  <div id="sectionsModal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 100; align-items: center; justify-content: center;">
+    <div style="background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 12px; width: min(720px, 96vw); box-shadow: var(--shadow);">
+      <div style="display:flex; align-items:center; justify-content: space-between; padding:12px 14px; border-bottom:1px solid var(--border); background: var(--panel-2);">
+        <strong>Управление разделами</strong>
+        <button id="sectionsClose" class="btn ghost">Закрыть</button>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 280px; gap: 12px; padding: 12px;">
+        <div id="sectionsTree" style="max-height: 60dvh; overflow:auto; border: 1px solid var(--border); border-radius: 8px; padding: 8px; background: var(--panel-3);"></div>
+        <div style="display:grid; gap:8px; align-content:start">
+          <button id="addRootSectionBtn" class="btn">+ Добавить раздел</button>
+          <button id="addChildSectionBtn" class="btn">+ Добавить подраздел</button>
+          <button id="renameSectionBtn" class="btn">✏️ Переименовать</button>
+          <button id="deleteSectionBtn" class="btn danger">🗑️ Удалить</button>
+          <div class="muted">Подразделы поддерживаются через связь parentId.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // ===== Утилиты =====
+    const byId = (id) => document.getElementById(id);
+    const uuid = () => (crypto?.randomUUID ? crypto.randomUUID() : 'id-' + Math.random().toString(36).slice(2));
+    const nowIso = () => new Date().toISOString();
+    const formatDate = (iso) => iso ? new Date(iso).toLocaleString() : '—';
+
+    const STORAGE_KEY = 'prompt_studio.templates.v1';
+    const VARS_KEY = 'prompt_studio.variables.v1';
+    const SECTIONS_KEY = 'prompt_studio.sections.v1';
+    const THEME_KEY = 'prompt_studio.theme.v1';
+    const PLACEHOLDER_RE = /\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g;
+
+    function dedupe(arr, key) {
+      const seen = new Set();
+      const res = [];
+      for (const it of arr) {
+        if (seen.has(it[key])) continue;
+        seen.add(it[key]); res.push(it);
+      }
+      return res;
+    }
+
+    function extractVars(text) {
+      if (!text) return [];
+      const set = new Set();
+      let m;
+      while ((m = PLACEHOLDER_RE.exec(text)) !== null) set.add(m[1]);
+      return Array.from(set);
+    }
+
+    function compile(text, varsMap) {
+      if (!text) return '';
+      return text.replace(PLACEHOLDER_RE, (_, name) => {
+        const v = (varsMap?.[name] ?? '');
+        return v === '' ? `«${name}?»` : v;
+      });
+    }
+
+    // Исправленная функция подсветки подстановок
+    function highlightCompiled(text, varsMap) {
+      // Сначала экранируем весь текст, чтобы избежать XSS и потери разметки
+      let html = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      // Затем заменяем плейсхолдеры на mark
+      html = html.replace(PLACEHOLDER_RE, (_, name) => {
+        const v = (varsMap?.[name] ?? '');
+        const shown = v === '' ? `«${name}?»` : v
+          .replace(/&/g,'&amp;')
+          .replace(/</g,'&lt;')
+          .replace(/>/g,'&gt;');
+        return `<mark>${shown}</mark>`;
+      });
+      return html;
+    }
+
+    // ===== Хранилище =====
+    function loadSections() {
+      try {
+        const raw = localStorage.getItem(SECTIONS_KEY);
+        if (!raw) return seedSections();
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) && arr.length ? arr : seedSections();
+      } catch { return seedSections(); }
+    }
+
+    function saveSections(list) {
+      localStorage.setItem(SECTIONS_KEY, JSON.stringify(list));
+    }
+
+    function seedSections() {
+      const base = [
+        { id: uuid(), name: 'Маркетинг', parentId: null },
+        { id: uuid(), name: 'Креатив', parentId: null },
+        { id: uuid(), name: 'Аналитика', parentId: null },
+        { id: uuid(), name: 'Дизайн', parentId: null }
+      ];
+      saveSections(base);
+      return base;
+    }
+
+    function loadTemplates() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return seedTemplates();
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : seedTemplates();
+      } catch { return seedTemplates(); }
+    }
+
+    function saveTemplates(list) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    function loadVars() {
+      try {
+        const raw = localStorage.getItem(VARS_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch { return {}; }
+    }
+
+    function saveVars(allVars) {
+      localStorage.setItem(VARS_KEY, JSON.stringify(allVars));
+    }
+
+    function seedTemplates() {
+      const demo = [
+        {
+          id: uuid(),
+          title: 'Суммаризация текста',
+          description: 'Кратко, структурировано, без воды',
+          author: '',
+          tags: ['ru','summary','concise'],
+          sectionId: null,
+          content:
+`Ты — эксперт по сжатию текста.
+Цель: подготовить краткую выжимку для {{audience}}.
+Стиль: {{tone}}. Формат: пункты списка (до 7).
+Сфокусируйся на: ключевые идеи, метрики, выводы.
+Исходный текст:
+{{input}}`,
+          updatedAt: nowIso()
+        },
+        {
+          id: uuid(),
+          title: 'Переформулировка с уточнением',
+          description: 'Улучшить формулировку, сохранить смысл',
+          author: '',
+          tags: ['ru','rewrite','clarify'],
+          sectionId: null,
+          content:
+`Перепиши текст так, чтобы он был яснее для {{audience}}.
+Сохрани смысл, убери двусмысленности, предложи лучшие термины.
+Тон: {{tone}}. Верни 1–2 варианта.
+Текст:
+{{input}}`,
+          updatedAt: nowIso()
+        },
+        {
+          id: uuid(),
+          title: 'План статьи',
+          description: 'Структура для статьи под SEO',
+          author: '',
+          tags: ['ru','seo','content'],
+          sectionId: null,
+          content:
+`Составь подробный план статьи для запроса "{{keyword}}".
+Целевая аудитория: {{audience}}. Тон: {{tone}}.
+Требования:
+- Заголовки H2/H3
+- Список ключевых вопросов
+- Блок FAQ
+- Примерные тезисы к каждому разделу`,
+          updatedAt: nowIso()
+        }
+      ];
+      saveTemplates(demo);
+      return demo;
+    }
+
+    // ===== Состояние =====
+    let sections = loadSections();
+    let templates = loadTemplates();
+    let allVars = loadVars(); // { [templateId]: { varName: value } }
+    let currentId = templates[0]?.id ?? null;
+    let currentSectionId = sections[0]?.id ?? null; // выбранный раздел для фильтрации
+    let searchQuery = '';
+
+    // ===== Элементы =====
+    const listEl = byId('list');
+    const sectionsBarEl = byId('sectionsBar');
+    const searchInput = byId('searchInput');
+    const clearSearchBtn = byId('clearSearchBtn');
+    const countInfo = byId('countInfo');
+
+    const titleEl = byId('title');
+    const tagsEl = byId('tags');
+    const descEl = byId('desc');
+    const authorEl = byId('author');
+    const contentEl = byId('content');
+    const varsEl = byId('vars');
+    const previewEl = byId('preview');
+    const savedAtEl = byId('savedAt');
+    const sectionSelectEl = byId('sectionSelect');
+
+    const newBtn = byId('newBtn');
+    const dupBtn = byId('dupBtn');
+    const moveBtn = byId('moveBtn');
+    const delBtn = byId('delBtn');
+    const saveBtn = byId('saveBtn');
+    const copyBtn = byId('copyBtn');
+    const resetVarsBtn = byId('resetVarsBtn');
+    const clearTemplateBtn = byId('clearTemplateBtn');
+    const wrapSelectionBtn = byId('wrapSelectionBtn');
+    const manageSectionsBtn = byId('manageSectionsBtn');
+    const themeBtn = byId('themeBtn');
+    const settingsBtn = byId('settingsBtn');
+    const cloudPullBtn = byId('cloudPullBtn');
+    const cloudPushBtn = byId('cloudPushBtn');
+
+    const importBtn = byId('importBtn');
+    const exportBtn = byId('exportBtn');
+    const importFile = byId('importFile');
+    const settingsModal = byId('settingsModal');
+    const settingsClose = byId('settingsClose');
+    const settingsSave = byId('settingsSave');
+    const supabaseUrlEl = byId('supabaseUrl');
+    const supabaseKeyEl = byId('supabaseKey');
+    const supabaseTableEl = byId('supabaseTable');
+    const cloudScopeEl = byId('cloudScope');
+
+    // ===== Рендер списка =====
+    function matchesQuery(t, q) {
+      if (!q) return true;
+      const s = q.toLowerCase();
+      return (
+        t.title.toLowerCase().includes(s) ||
+        (t.description || '').toLowerCase().includes(s) ||
+        (t.tags || []).join(' ').toLowerCase().includes(s)
+      );
+    }
+
+    function renderList() {
+      const filtered = templates.filter(t => {
+        const bySection = currentSectionId ? (t.sectionId === currentSectionId) : true;
+        const match = bySection && matchesQuery(t, searchQuery);
+        if (!match && searchQuery) {
+          const s = searchQuery.toLowerCase();
+          return (t.author || '').toLowerCase().includes(s);
+        }
+        return match;
+      });
+      listEl.innerHTML = '';
+      for (const t of filtered) {
+        const div = document.createElement('div');
+        div.className = 'item' + (t.id === currentId ? ' active' : '');
+        div.innerHTML = `
+          <h4>${escapeHtml(t.title)}</h4>
+          <div class="muted" style="margin-bottom:6px">${escapeHtml(t.description || '')}</div>
+          ${t.author ? `<div class=\"muted\" style=\"margin-bottom:6px\">Автор: ${escapeHtml(t.author)}</div>` : ''}
+          <div class="tags">${(t.tags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join(' ')}</div>
+        `;
+        div.addEventListener('click', () => { currentId = t.id; renderAll(); });
+        listEl.appendChild(div);
+      }
+      const sectionName = sections.find(s => s.id === currentSectionId)?.name || '—';
+      countInfo.textContent = `Раздел: ${sectionName} • Показано: ${filtered.length} • Всего: ${templates.length}`;
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    }
+
+    // ===== Редактор/предпросмотр =====
+    function getCurrent() {
+      return templates.find(t => t.id === currentId) || null;
+    }
+
+    function loadEditor(t) {
+      if (!t) {
+        titleEl.value = '';
+        tagsEl.value = '';
+        descEl.value = '';
+        authorEl.value = '';
+        contentEl.value = '';
+        savedAtEl.textContent = '—';
+        varsEl.innerHTML = '';
+        previewEl.textContent = '';
+        return;
+      }
+      titleEl.value = t.title || '';
+      tagsEl.value = (t.tags || []).join(', ');
+      descEl.value = t.description || '';
+      authorEl.value = t.author || '';
+      contentEl.value = t.content || '';
+      savedAtEl.textContent = formatDate(t.updatedAt);
+      renderSectionSelect();
+      renderVarsAndPreview();
+    }
+
+    function collectEditor() {
+      const t = getCurrent();
+      const base = {
+        id: t?.id ?? uuid(),
+        title: titleEl.value.trim() || 'Без названия',
+        description: descEl.value.trim(),
+        author: authorEl.value.trim(),
+        tags: tagsEl.value.split(',').map(s => s.trim()).filter(Boolean),
+        content: contentEl.value,
+        sectionId: sectionSelectEl.value || currentSectionId,
+        updatedAt: nowIso()
+      };
+      return base;
+    }
+
+    function renderVarsAndPreview() {
+      const t = getCurrent();
+      const content = contentEl.value;
+      const names = extractVars(content);
+      const currentVars = allVars[t?.id || 'tmp'] || {};
+      // Синхронизация: удалить значения несуществующих переменных
+      for (const k of Object.keys(currentVars)) {
+        if (!names.includes(k)) delete currentVars[k];
+      }
+      varsEl.innerHTML = '';
+      if (names.length === 0) {
+        varsEl.innerHTML = '<span class="muted">Плейсхолдеры не обнаружены. Используйте {{variable}}.</span>';
+      } else {
+        for (const name of names) {
+          const wrap = document.createElement('div');
+          wrap.className = 'row';
+          const id = 'var_' + name;
+          wrap.innerHTML = `
+            <label for="${id}">${name}</label>
+            <input type="text" id="${id}" placeholder="${name}" value="${(currentVars[name] ?? '').replace(/"/g,'&quot;')}" />
+          `;
+          const input = wrap.querySelector('input');
+          input.addEventListener('input', () => {
+            const key = t?.id || 'tmp';
+            allVars[key] = allVars[key] || {};
+            allVars[key][name] = input.value;
+            saveVars(allVars);
+            updatePreview();
+          });
+          varsEl.appendChild(wrap);
+        }
+      }
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const t = getCurrent();
+      const key = t?.id || 'tmp';
+      const compiled = compile(contentEl.value, allVars[key] || {});
+      previewEl.innerHTML = highlightCompiled(contentEl.value, allVars[key] || {})
+        .replace(/\n/g, '<br/>');
+    }
+
+    // ===== Разделы =====
+    function ensureTemplateSections() {
+      // Для шаблонов без раздела — назначаем текущий или первый доступный
+      const fallback = sections[0]?.id || null;
+      let changed = false;
+      for (const t of templates) {
+        if (!t.sectionId) { t.sectionId = fallback; changed = true; }
+      }
+      if (changed) saveTemplates(templates);
+    }
+
+    function buildSectionTree(list) {
+      const byParent = new Map();
+      for (const s of list) {
+        const p = s.parentId || null;
+        if (!byParent.has(p)) byParent.set(p, []);
+        byParent.get(p).push(s);
+      }
+      for (const [, arr] of byParent) arr.sort((a,b)=>a.name.localeCompare(b.name,'ru'));
+      function renderNodes(parentId, level=0) {
+        const arr = byParent.get(parentId || null) || [];
+        const out = [];
+        for (const s of arr) {
+          out.push({ ...s, level });
+          out.push(...renderNodes(s.id, level+1));
+        }
+        return out;
+      }
+      return renderNodes(null, 0);
+    }
+
+    function renderSectionsBar() {
+      sectionsBarEl.innerHTML = '';
+      const flat = buildSectionTree(sections);
+      for (const s of flat) {
+        const b = document.createElement('button');
+        b.className = 'tab' + (s.id === currentSectionId ? ' active' : '');
+        b.textContent = (s.level ? '▸ '.repeat(s.level) : '') + s.name;
+        b.addEventListener('click', () => {
+          currentSectionId = s.id;
+          renderAll();
+        });
+        sectionsBarEl.appendChild(b);
+      }
+    }
+
+    function renderSectionSelect() {
+      const flat = buildSectionTree(sections);
+      sectionSelectEl.innerHTML = flat.map(s => `<option value="${s.id}">${(s.level? '▸ '.repeat(s.level):'') + s.name}</option>`).join('');
+      const t = getCurrent();
+      const value = t?.sectionId || currentSectionId || sections[0]?.id || '';
+      sectionSelectEl.value = value;
+    }
+
+    // ===== Управление разделами (модал) =====
+    const sectionsModal = byId('sectionsModal');
+    const sectionsClose = byId('sectionsClose');
+    const sectionsTreeEl = byId('sectionsTree');
+    const addRootSectionBtn = byId('addRootSectionBtn');
+    const addChildSectionBtn = byId('addChildSectionBtn');
+    const renameSectionBtn = byId('renameSectionBtn');
+    const deleteSectionBtn = byId('deleteSectionBtn');
+    let selectedSectionId = null;
+
+    function openSectionsModal() {
+      selectedSectionId = currentSectionId;
+      renderSectionsTree();
+      sectionsModal.style.display = 'flex';
+    }
+    function closeSectionsModal() { sectionsModal.style.display = 'none'; }
+
+    function renderSectionsTree() {
+      const flat = buildSectionTree(sections);
+      sectionsTreeEl.innerHTML = '';
+      for (const s of flat) {
+        const row = document.createElement('div');
+        row.style.padding = '6px 8px';
+        row.style.cursor = 'pointer';
+        row.style.borderRadius = '8px';
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+        row.innerHTML = `<span style="opacity:.7;margin-right:6px">${'— '.repeat(s.level)}</span><span>${escapeHtml(s.name)}</span>`;
+        if (s.id === selectedSectionId) { row.style.background = 'var(--panel)'; row.style.boxShadow = '0 0 0 3px var(--ring)'; }
+        row.addEventListener('click', () => { selectedSectionId = s.id; renderSectionsTree(); });
+        sectionsTreeEl.appendChild(row);
+      }
+    }
+
+    function addSectionRoot() {
+      const name = prompt('Название нового раздела:', 'Новый раздел');
+      if (!name) return;
+      const s = { id: uuid(), name: name.trim(), parentId: null };
+      sections.push(s); saveSections(sections);
+      currentSectionId = s.id; renderSectionsBar(); renderList(); renderSectionSelect(); renderSectionsTree();
+    }
+    function addSectionChild() {
+      if (!selectedSectionId) { toast('Сначала выберите раздел'); return; }
+      const name = prompt('Название подраздела:', 'Новый подраздел');
+      if (!name) return;
+      const s = { id: uuid(), name: name.trim(), parentId: selectedSectionId };
+      sections.push(s); saveSections(sections);
+      currentSectionId = s.id; renderSectionsBar(); renderList(); renderSectionSelect(); renderSectionsTree();
+    }
+    function renameSection() {
+      if (!selectedSectionId) { toast('Сначала выберите раздел'); return; }
+      const s = sections.find(x => x.id === selectedSectionId);
+      if (!s) return; 
+      const name = prompt('Новое имя раздела:', s.name);
+      if (!name) return; s.name = name.trim(); saveSections(sections);
+      renderSectionsBar(); renderList(); renderSectionSelect(); renderSectionsTree();
+    }
+    function deleteSection() {
+      if (!selectedSectionId) { toast('Сначала выберите раздел'); return; }
+      const subtreeIds = (function collect(id){
+        const children = sections.filter(x => x.parentId === id).map(x=>x.id);
+        return [id, ...children.flatMap(collect)];
+      })(selectedSectionId);
+      const affected = templates.filter(t => subtreeIds.includes(t.sectionId)).length;
+      if (!confirm(`Удалить раздел и его подразделы? Затронутых шаблонов: ${affected}. Они будут перемещены в корень.`)) return;
+      // Удаляем разделы
+      sections = sections.filter(s => !subtreeIds.includes(s.id));
+      saveSections(sections);
+      // Переносим шаблоны в ближайший доступный корень (null -> первый корневой)
+      const firstRoot = (sections.find(s => !s.parentId)?.id) || null;
+      for (const t of templates) {
+        if (subtreeIds.includes(t.sectionId)) t.sectionId = firstRoot;
+      }
+      saveTemplates(templates);
+      currentSectionId = firstRoot;
+      renderSectionsBar(); renderList(); renderSectionSelect(); renderSectionsTree();
+    }
+
+    // ===== Действия =====
+    function createNewTemplate() {
+      const t = {
+        id: uuid(),
+        title: 'Новый шаблон',
+        description: '',
+        tags: [],
+        content: '',
+        sectionId: currentSectionId,
+        updatedAt: nowIso()
+      };
+      templates.unshift(t);
+      saveTemplates(templates);
+      currentId = t.id;
+      renderAll();
+      titleEl.focus();
+    }
+
+    function duplicateTemplate() {
+      const t = getCurrent();
+      if (!t) return;
+      const copy = { ...t, id: uuid(), title: t.title + ' (копия)', updatedAt: nowIso() };
+      templates.unshift(copy);
+      // Копируем значения переменных
+      if (allVars[t.id]) {
+        allVars[copy.id] = { ...allVars[t.id] };
+        saveVars(allVars);
+      }
+      saveTemplates(templates);
+      currentId = copy.id;
+      renderAll();
+    }
+
+    function moveTemplateToSection() {
+      const t = getCurrent();
+      if (!t) return;
+      const options = sections.map((s, i) => `${i + 1}. ${s.name}`).join('\n');
+      const input = prompt(`Переместить «${t.title}» в раздел:\n${options}\nВведите номер раздела:`, '1');
+      const idx = Number(input) - 1;
+      if (Number.isNaN(idx) || idx < 0 || idx >= sections.length) return;
+      const target = sections[idx];
+      t.sectionId = target.id;
+      t.updatedAt = nowIso();
+      saveTemplates(templates);
+      renderAll();
+      toast(`Перемещено в «${target.name}»`);
+    }
+
+    function deleteTemplate() {
+      const t = getCurrent();
+      if (!t) return;
+      if (!confirm(`Удалить шаблон «${t.title}»?`)) return;
+      templates = templates.filter(x => x.id !== t.id);
+      delete allVars[t.id];
+      saveVars(allVars);
+      saveTemplates(templates);
+      currentId = templates[0]?.id || null;
+      renderAll();
+    }
+
+    function saveTemplate() {
+      const updated = collectEditor();
+      const idx = templates.findIndex(t => t.id === updated.id);
+      if (idx === -1) templates.unshift(updated);
+      else templates[idx] = updated;
+      saveTemplates(templates);
+      savedAtEl.textContent = formatDate(updated.updatedAt);
+      renderList();
+      // перенос временных переменных в сохраненный id
+      if (allVars['tmp'] && !allVars[updated.id]) {
+        allVars[updated.id] = { ...allVars['tmp'] }; delete allVars['tmp']; saveVars(allVars);
+      }
+      toast('Сохранено');
+    }
+
+    function clearTemplateForm() {
+      titleEl.value = '';
+      tagsEl.value = '';
+      descEl.value = '';
+      contentEl.value = '';
+      renderVarsAndPreview();
+    }
+
+    function resetVariablesValues() {
+      const t = getCurrent();
+      if (!t) return;
+      allVars[t.id] = {};
+      saveVars(allVars);
+      renderVarsAndPreview();
+      toast('Переменные сброшены');
+    }
+
+    function copyCompiled() {
+      const t = getCurrent();
+      const key = t?.id || 'tmp';
+      const compiled = compile(contentEl.value, allVars[key] || {});
+      navigator.clipboard.writeText(compiled).then(() => toast('Скопировано'));
+    }
+
+    function wrapSelectionWithVar() {
+      const selStart = contentEl.selectionStart;
+      const selEnd = contentEl.selectionEnd;
+      const hasSelection = selEnd > selStart;
+      const raw = contentEl.value;
+      if (!hasSelection) {
+        const v = prompt('Имя переменной (a–z, 0–9, _):', 'variable');
+        if (!v) return;
+        const insert = `{{${v}}}`;
+        const pos = contentEl.selectionStart;
+        contentEl.value = raw.slice(0, pos) + insert + raw.slice(pos);
+        contentEl.focus();
+        contentEl.selectionStart = contentEl.selectionEnd = pos + insert.length;
+      } else {
+        const v = prompt('Имя переменной для выделенного текста:', 'variable');
+        if (!v) return;
+        const replaced = raw.slice(0, selStart) + `{{${v}}}` + raw.slice(selEnd);
+        contentEl.value = replaced;
+      }
+      renderVarsAndPreview();
+    }
+
+    // ===== Импорт/экспорт =====
+    function exportData() {
+      const data = { templates, variables: allVars, sections, exportedAt: nowIso(), app: 'prompt-studio' };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `prompt-templates-${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function importData(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(String(reader.result || '{}'));
+          const incoming = Array.isArray(parsed) ? parsed : (Array.isArray(parsed.templates) ? parsed.templates : []);
+          if (incoming.length === 0) { alert('Некорректный файл импорта'); return; }
+          // merge
+          const map = new Map(templates.map(t => [t.id, t]));
+          for (const it of incoming) {
+            if (!it.id) it.id = uuid();
+            map.set(it.id, { ...it, updatedAt: it.updatedAt || nowIso() });
+          }
+          templates = Array.from(map.values()).sort((a,b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+          // variables
+          if (parsed.variables && typeof parsed.variables === 'object') {
+            allVars = { ...allVars, ...parsed.variables };
+            saveVars(allVars);
+          }
+          // sections (с поддержкой parentId)
+          if (parsed.sections && Array.isArray(parsed.sections) && parsed.sections.length) {
+            const byId = new Map(sections.map(s => [s.id, s]));
+            for (const s of parsed.sections) {
+              const id = s.id || uuid();
+              byId.set(id, { id, name: s.name, parentId: s.parentId || null });
+            }
+            sections = Array.from(byId.values());
+            saveSections(sections);
+          }
+          saveTemplates(templates);
+          renderAll();
+          toast(`Импортировано: ${incoming.length}`);
+        } catch (e) {
+          alert('Ошибка импорта: ' + e.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // ===== UI: события =====
+    searchInput.addEventListener('input', () => { searchQuery = searchInput.value.trim(); renderList(); });
+    clearSearchBtn.addEventListener('click', () => { searchQuery = ''; searchInput.value=''; renderList(); });
+
+    newBtn.addEventListener('click', createNewTemplate);
+    dupBtn.addEventListener('click', duplicateTemplate);
+    moveBtn.addEventListener('click', moveTemplateToSection);
+    delBtn.addEventListener('click', deleteTemplate);
+
+    saveBtn.addEventListener('click', saveTemplate);
+    copyBtn.addEventListener('click', copyCompiled);
+    resetVarsBtn.addEventListener('click', resetVariablesValues);
+    clearTemplateBtn.addEventListener('click', clearTemplateForm);
+    wrapSelectionBtn.addEventListener('click', wrapSelectionWithVar);
+    manageSectionsBtn.addEventListener('click', openSectionsModal);
+    sectionsClose.addEventListener('click', closeSectionsModal);
+    sectionsModal.addEventListener('click', (e) => { if (e.target === sectionsModal) closeSectionsModal(); });
+    addRootSectionBtn.addEventListener('click', addSectionRoot);
+    addChildSectionBtn.addEventListener('click', addSectionChild);
+    renameSectionBtn.addEventListener('click', renameSection);
+    deleteSectionBtn.addEventListener('click', deleteSection);
+
+    contentEl.addEventListener('input', renderVarsAndPreview);
+    titleEl.addEventListener('input', () => savedAtEl.textContent = '—');
+    descEl.addEventListener('input', () => savedAtEl.textContent = '—');
+    tagsEl.addEventListener('input', () => savedAtEl.textContent = '—');
+
+    exportBtn.addEventListener('click', exportData);
+    importBtn.addEventListener('click', () => importFile.click());
+    importFile.addEventListener('change', (e) => { const f = e.target.files?.[0]; if (f) importData(f); importFile.value=''; });
+
+    // ===== Тема (светлая/тёмная) =====
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeBtn.textContent = 'Тема: Тёмная';
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        themeBtn.textContent = 'Тема: Светлая';
+      }
+    }
+    function loadTheme() {
+      try { return localStorage.getItem(THEME_KEY) || 'light'; } catch { return 'light'; }
+    }
+    function saveTheme(t) { try { localStorage.setItem(THEME_KEY, t); } catch {} }
+    themeBtn.addEventListener('click', () => {
+      const current = loadTheme();
+      const next = current === 'dark' ? 'light' : 'dark';
+      saveTheme(next); applyTheme(next);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!e.ctrlKey) return;
+      if (e.key.toLowerCase() === 's') { e.preventDefault(); saveTemplate(); }
+      if (e.key.toLowerCase() === 'n') { e.preventDefault(); createNewTemplate(); }
+      if (e.key.toLowerCase() === 'b') { e.preventDefault(); copyCompiled(); }
+      if (e.key.toLowerCase() === 'e') { e.preventDefault(); exportData(); }
+    });
+
+    // ====== Облако (Supabase REST) ======
+    const CLOUD_CFG_KEY = 'prompt_studio.cloud.supabase.v1';
+    function loadCloudCfg() {
+      try { return JSON.parse(localStorage.getItem(CLOUD_CFG_KEY) || '{}'); } catch { return {}; }
+    }
+    function saveCloudCfg(cfg) {
+      localStorage.setItem(CLOUD_CFG_KEY, JSON.stringify(cfg));
+    }
+
+    function openSettings() {
+      const cfg = loadCloudCfg();
+      supabaseUrlEl.value = cfg.url || '';
+      supabaseKeyEl.value = cfg.key || '';
+      supabaseTableEl.value = cfg.table || 'templates';
+      cloudScopeEl.value = cfg.scope || 'templates';
+      settingsModal.style.display = 'flex';
+    }
+    function closeSettings() { settingsModal.style.display = 'none'; }
+
+    async function cloudPush() {
+      const cfg = loadCloudCfg();
+      if (!cfg.url || !cfg.key) { toast('Укажите Supabase в настройках'); return; }
+      const table = cfg.table || 'templates';
+      try {
+        const resp = await fetch(`${cfg.url.replace(/\/$/,'')}/rest/v1/${table}?on_conflict=id`, {
+          method: 'POST',
+          headers: {
+            'apikey': cfg.key,
+            'Authorization': `Bearer ${cfg.key}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates,return=minimal'
+          },
+          body: JSON.stringify(templates)
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        if ((cfg.scope || 'templates') === 'all') {
+          // push sections
+          await fetch(`${cfg.url.replace(/\/$/,'')}/rest/v1/sections?on_conflict=id`, {
+            method: 'POST',
+            headers: { 'apikey': cfg.key, 'Authorization': `Bearer ${cfg.key}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+            body: JSON.stringify(sections)
+          });
+          // push variables as rows {templateId, values}
+          const varsRows = Object.entries(allVars).map(([templateId, values]) => ({ templateId, values }));
+          await fetch(`${cfg.url.replace(/\/$/,'')}/rest/v1/variables?on_conflict=templateId`, {
+            method: 'POST',
+            headers: { 'apikey': cfg.key, 'Authorization': `Bearer ${cfg.key}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+            body: JSON.stringify(varsRows)
+          });
+        }
+        toast('Выгружено в облако');
+      } catch (e) {
+        toast('Ошибка выгрузки: ' + e.message);
+      }
+    }
+
+    async function cloudPull() {
+      const cfg = loadCloudCfg();
+      if (!cfg.url || !cfg.key) { toast('Укажите Supabase в настройках'); return; }
+      const table = cfg.table || 'templates';
+      try {
+        const resp = await fetch(`${cfg.url.replace(/\/$/,'')}/rest/v1/${table}?select=*`, {
+          headers: {
+            'apikey': cfg.key,
+            'Authorization': `Bearer ${cfg.key}`
+          }
+        });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const rows = await resp.json();
+        if (!Array.isArray(rows)) throw new Error('Некорректный ответ');
+        templates = rows.map(r => ({
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          author: r.author || '',
+          tags: Array.isArray(r.tags) ? r.tags : (typeof r.tags === 'string' ? r.tags.split(',').map(s=>s.trim()).filter(Boolean) : []),
+          content: r.content,
+          sectionId: r.sectionId || sections[0]?.id || null,
+          updatedAt: r.updatedAt || nowIso()
+        }));
+        saveTemplates(templates);
+        // Дополнительно: при scope=all подтянуть sections и variables
+        if ((cfg.scope || 'templates') === 'all') {
+          // sections
+          const secResp = await fetch(`${cfg.url.replace(/\/$/,'')}/rest/v1/sections?select=*`, {
+            headers: { 'apikey': cfg.key, 'Authorization': `Bearer ${cfg.key}` }
+          });
+          if (secResp.ok) {
+            const secs = await secResp.json();
+            if (Array.isArray(secs)) {
+              sections = secs.map(s => ({ id: s.id, name: s.name, parentId: s.parentId || null }));
+              saveSections(sections);
+            }
+          }
+          // variables
+          const varsResp = await fetch(`${cfg.url.replace(/\/$/,'')}/rest/v1/variables?select=*`, {
+            headers: { 'apikey': cfg.key, 'Authorization': `Bearer ${cfg.key}` }
+          });
+          if (varsResp.ok) {
+            const varsRows = await varsResp.json();
+            if (Array.isArray(varsRows)) {
+              const merged = {};
+              for (const row of varsRows) {
+                const tid = row.templateId;
+                merged[tid] = row.values || {};
+              }
+              allVars = merged; saveVars(allVars);
+            }
+          }
+        }
+        renderAll();
+        toast(`Загружено из облака: ${templates.length}`);
+      } catch (e) {
+        toast('Ошибка загрузки: ' + e.message);
+      }
+    }
+
+    settingsBtn.addEventListener('click', openSettings);
+    settingsClose.addEventListener('click', closeSettings);
+    settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettings(); });
+    settingsSave.addEventListener('click', () => {
+      const cfg = {
+        url: supabaseUrlEl.value.trim(),
+        key: supabaseKeyEl.value.trim(),
+        table: supabaseTableEl.value.trim() || 'templates',
+        scope: cloudScopeEl.value
+      };
+      saveCloudCfg(cfg);
+      toast('Настройки сохранены');
+      closeSettings();
+    });
+    cloudPushBtn.addEventListener('click', cloudPush);
+    cloudPullBtn.addEventListener('click', cloudPull);
+
+    // ===== Уведомления =====
+    let toastTimer = null;
+    function toast(msg) {
+      let el = document.getElementById('toast');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'toast';
+        el.style.position = 'fixed';
+        el.style.bottom = '16px';
+        el.style.right = '16px';
+        el.style.padding = '10px 12px';
+        el.style.border = '1px solid var(--border)';
+        el.style.background = 'linear-gradient(180deg,#12243a,#0c1a2d)';
+        el.style.color = 'var(--text)';
+        el.style.borderRadius = '10px';
+        el.style.boxShadow = '0 8px 40px rgba(0,0,0,.45)';
+        document.body.appendChild(el);
+      }
+      el.textContent = msg;
+      el.style.opacity = '1';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { el.style.opacity = '0'; }, 1600);
+    }
+
+    // ===== Инициализация =====
+    function renderAll() {
+      ensureTemplateSections();
+      renderSectionsBar();
+      renderList();
+      loadEditor(getCurrent());
+    }
+
+    // Инициализация темы и интерфейса
+    applyTheme(loadTheme());
+    renderAll();
+  </script>
+</body>
+</html>
